@@ -1,0 +1,24 @@
+{
+  "name": "@deeliciousbakes/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@deeliciousbakes/db": "workspace:*",
+    "@deeliciousbakes/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@deeliciousbakes/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
