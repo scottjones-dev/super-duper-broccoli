@@ -1,0 +1,16 @@
+{
+  "name": "@deeliciousbakes/storage",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1075.0",
+    "@aws-sdk/s3-request-presigner": "^3.1075.0",
+    "@deeliciousbakes/auth": "workspace:*",
+    "@deeliciousbakes/config": "workspace:*",
+    "@deeliciousbakes/db": "workspace:*",
+    "@deeliciousbakes/transactional": "workspace:*",
+    "@deeliciousbakes/env": "workspace:*"
+  }
+}
