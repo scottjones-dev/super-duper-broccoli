@@ -1,6 +1,7 @@
 {
   "name": "deeliciousbakes",
   "private": true,
+  "version": "0.0.0",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -24,7 +25,8 @@
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "gen": "turbo gen"
   },
   "dependencies": {
     "@deeliciousbakes/env": "workspace:*",
@@ -34,9 +36,10 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
     "@deeliciousbakes/config": "workspace:*",
+    "@turbo/gen": "^2.10.0",
     "@types/node": "^22.13.14",
     "turbo": "^2.9.16",
     "typescript": "catalog:"
   },
-  "packageManager": "pnpm@11.5.1"
+  "packageManager": "pnpm@11.9.0"
 }
