@@ -168,4 +168,91 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       },
     ],
   });
+
+  // -------------------------------------------------------
+  // 4. Full-stack API Vertical (DB Schema, Hono Server Route/Handlers/Index, Web Data Actions)
+  // -------------------------------------------------------
+  plop.setGenerator("api-vertical", {
+    description: "Generate a full-stack API vertical: database schema, Hono server routes/handlers, and Next.js frontend fetchers",
+    prompts: [
+      {
+        type: "input",
+        name: "name",
+        message: "Entity name (singular kebab-case, e.g. customer-order or settings-meta):",
+        validate: (input: string) => {
+          if (!input) return "name is required";
+          if (input.includes(" ")) return "name cannot include spaces";
+          if (input !== input.toLowerCase()) return "name must be lowercase";
+          return true;
+        },
+      },
+    ],
+    actions: [
+      // 1. Create DB Schema
+      {
+        type: "add",
+        path: "{{ turbo.paths.root }}/packages/db/src/schema/{{ kebabCase name }}.ts",
+        templateFile: "templates/db-schema.ts.hbs",
+      },
+      // 2. Export DB Schema from packages/db/src/schema/index.ts
+      {
+        type: "modify",
+        path: "{{ turbo.paths.root }}/packages/db/src/schema/index.ts",
+        pattern: /$/,
+        template: 'export * from "./{{ kebabCase name }}";\n',
+      },
+      // 3. Create Server Route Definition
+      {
+        type: "add",
+        path: "{{ turbo.paths.root }}/apps/server/src/routes/{{ kebabCase name }}/{{ kebabCase name }}.routes.ts",
+        templateFile: "templates/server-routes.ts.hbs",
+      },
+      // 4. Create Server Route Handlers
+      {
+        type: "add",
+        path: "{{ turbo.paths.root }}/apps/server/src/routes/{{ kebabCase name }}/{{ kebabCase name }}.handlers.ts",
+        templateFile: "templates/server-handlers.ts.hbs",
+      },
+      // 5. Create Server Router Index
+      {
+        type: "add",
+        path: "{{ turbo.paths.root }}/apps/server/src/routes/{{ kebabCase name }}/{{ kebabCase name }}.index.ts",
+        templateFile: "templates/server-index.ts.hbs",
+      },
+      // 6. Import and register server route in apps/server/src/app.ts
+      {
+        type: "modify",
+        path: "{{ turbo.paths.root }}/apps/server/src/app.ts",
+        pattern: /(import auditLogRouter from "@\/routes\/audit-log\/audit-logs\.index";)/,
+        template: 'import {{ camelCase name }}Router from "@/routes/{{ kebabCase name }}/{{ kebabCase name }}.index";\n$1',
+      },
+      {
+        type: "modify",
+        path: "{{ turbo.paths.root }}/apps/server/src/app.ts",
+        pattern: /(const routes = \[[^\]]*)(Home[^\]]*)(] as const;)/,
+        template: '$1$2, {{ camelCase name }}Router$3',
+      },
+      // 7. Create Frontend Web Data Client folder & files
+      {
+        type: "add",
+        path: "{{ turbo.paths.root }}/apps/web/src/data/{{ kebabCase name }}/get.ts",
+        templateFile: "templates/web-data-get.ts.hbs",
+      },
+      {
+        type: "add",
+        path: "{{ turbo.paths.root }}/apps/web/src/data/{{ kebabCase name }}/post.ts",
+        templateFile: "templates/web-data-post.ts.hbs",
+      },
+      {
+        type: "add",
+        path: "{{ turbo.paths.root }}/apps/web/src/data/{{ kebabCase name }}/delete.ts",
+        templateFile: "templates/web-data-delete.ts.hbs",
+      },
+      {
+        type: "add",
+        path: "{{ turbo.paths.root }}/apps/web/src/data/{{ kebabCase name }}/index.ts",
+        templateFile: "templates/web-data-index.ts.hbs",
+      },
+    ],
+  });
 }

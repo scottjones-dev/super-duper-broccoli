@@ -1,0 +1,37 @@
+// packages/db/src/schema/{{kebabCase name}}.ts
+import { boolean, integer, pgTable, real, text } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { baseColumns } from "../helpers/base-columns";
+import { auditColumns } from "../helpers/audit-columns";
+
+export const {{camelCase name}} = pgTable("{{snakeCase name}}", {
+    ...baseColumns,
+    ...auditColumns,
+    name: text("name").notNull(),
+    // TODO: Add your custom database columns here
+});
+
+// -----------------------------------------------------------------------------
+// Zod Schemas
+// -----------------------------------------------------------------------------
+
+export const select{{pascalCase name}}Schema = createSelectSchema({{camelCase name}});
+
+export const insert{{pascalCase name}}Schema = createInsertSchema({{camelCase name}}, {
+    name: field => field.min(1).max(255),
+}).omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    createdBy: true,
+    updatedBy: true,
+});
+
+export const patch{{pascalCase name}}Schema = insert{{pascalCase name}}Schema.partial();
+
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
+export type {{pascalCase name}} = typeof {{camelCase name}}.$inferSelect;
+export type New{{pascalCase name}} = typeof {{camelCase name}}.$inferInsert;

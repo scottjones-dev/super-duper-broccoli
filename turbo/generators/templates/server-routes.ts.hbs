@@ -1,0 +1,131 @@
+import { createRoute, z } from "@hono/zod-openapi";
+import * as HttpStatusCodes from "@/http/status-codes";
+import { jsonContent, jsonContentRequired } from "@/openapi/helpers";
+import { createErrorSchema, IdParamsSchema } from "@/openapi/schemas";
+
+import { insert{{pascalCase name}}Schema, select{{pascalCase name}}Schema, patch{{pascalCase name}}Schema } from "@deeliciousbakes/db/schema/{{kebabCase name}}";
+import { notFoundSchema, internalServerErrorSchema } from "@/constants";
+
+const tags = ["{{pascalCase name}}"];
+
+export const list = createRoute({
+    path: "/{{kebabCase name}}",
+    operationId: "list{{pascalCase name}}",
+    method: "get",
+    tags,
+    responses: {
+        [HttpStatusCodes.OK]: jsonContent(
+            z.array(select{{pascalCase name}}Schema),
+            "The list of {{camelCase name}} items",
+        ),
+    },
+});
+
+export const create = createRoute({
+    path: "/{{kebabCase name}}",
+    operationId: "create{{pascalCase name}}",
+    method: "post",
+    request: {
+        body: jsonContentRequired(
+            insert{{pascalCase name}}Schema,
+            "The {{camelCase name}} to create",
+        ),
+    },
+    tags,
+    responses: {
+        [HttpStatusCodes.OK]: jsonContent(
+            select{{pascalCase name}}Schema,
+            "The created {{camelCase name}} item",
+        ),
+        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+            createErrorSchema(insert{{pascalCase name}}Schema),
+            "The validation error(s)",
+        ),
+        [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+            internalServerErrorSchema,
+            "Failed to create {{camelCase name}}",
+        ),
+    },
+});
+
+export const getOne = createRoute({
+    path: "/{{kebabCase name}}/{id}",
+    operationId: "get{{pascalCase name}}",
+    method: "get",
+    request: {
+        params: IdParamsSchema,
+    },
+    tags,
+    responses: {
+        [HttpStatusCodes.OK]: jsonContent(
+            select{{pascalCase name}}Schema,
+            "The requested {{camelCase name}} item",
+        ),
+        [HttpStatusCodes.NOT_FOUND]: jsonContent(
+            notFoundSchema,
+            "{{pascalCase name}} not found",
+        ),
+        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+            createErrorSchema(IdParamsSchema),
+            "Invalid id error",
+        ),
+    },
+});
+
+export const patch = createRoute({
+    path: "/{{kebabCase name}}/{id}",
+    operationId: "patch{{pascalCase name}}",
+    method: "patch",
+    request: {
+        params: IdParamsSchema,
+        body: jsonContentRequired(
+            patch{{pascalCase name}}Schema,
+            "The {{camelCase name}} updates",
+        ),
+    },
+    tags,
+    responses: {
+        [HttpStatusCodes.OK]: jsonContent(
+            select{{pascalCase name}}Schema,
+            "The updated {{camelCase name}} item",
+        ),
+        [HttpStatusCodes.NOT_FOUND]: jsonContent(
+            notFoundSchema,
+            "{{pascalCase name}} not found",
+        ),
+        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+            createErrorSchema(patch{{pascalCase name}}Schema)
+                .or(createErrorSchema(IdParamsSchema)),
+            "The validation error(s)",
+        ),
+    },
+});
+
+export const remove = createRoute({
+    path: "/{{kebabCase name}}/{id}",
+    operationId: "delete{{pascalCase name}}",
+    method: "delete",
+    request: {
+        params: IdParamsSchema,
+    },
+    tags,
+    responses: {
+        [HttpStatusCodes.NO_CONTENT]: {
+            description: "{{pascalCase name}} deleted",
+        },
+        [HttpStatusCodes.NOT_FOUND]: jsonContent(
+            notFoundSchema,
+            "{{pascalCase name}} not found",
+        ),
+        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+            createErrorSchema(IdParamsSchema),
+            "Invalid id error",
+        ),
+    },
+});
+
+export type ListRoute = typeof list;
+export type CreateRoute = typeof create;
+export type GetOneRoute = typeof getOne;
+export type PatchRoute = typeof patch;
+export type RemoveRoute = typeof remove;

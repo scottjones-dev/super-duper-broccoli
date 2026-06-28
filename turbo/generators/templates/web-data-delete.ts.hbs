@@ -1,0 +1,11 @@
+import { client } from "@/lib/api-client";
+
+export async function delete{{pascalCase name}}(id: string) {
+  try {
+    const response = await client.delete(`/{{kebabCase name}}/${id}`);
+    return response;
+  } catch (error) {
+    console.error(`Error in delete{{pascalCase name}}(${id}):`, error);
+    throw error;
+  }
+}

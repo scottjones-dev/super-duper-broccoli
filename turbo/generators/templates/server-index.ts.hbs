@@ -1,0 +1,19 @@
+import { createRouter } from "@/lib/create-app";
+import * as handlers from "./{{kebabCase name}}.handlers";
+import * as routes from "./{{kebabCase name}}.routes";
+import { requireAdmin } from "@/middleware/require-admin";
+import { sessionMiddleware } from "@/middleware";
+
+const {{camelCase name}}Router = createRouter();
+
+{{camelCase name}}Router.use(sessionMiddleware);
+{{camelCase name}}Router.use(requireAdmin);
+
+{{camelCase name}}Router
+  .openapi(routes.list, handlers.list)
+  .openapi(routes.create, handlers.create)
+  .openapi(routes.getOne, handlers.getOne)
+  .openapi(routes.patch, handlers.patch)
+  .openapi(routes.remove, handlers.remove);
+
+export default {{camelCase name}}Router;

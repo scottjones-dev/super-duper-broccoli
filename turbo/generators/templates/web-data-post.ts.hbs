@@ -1,0 +1,21 @@
+import { client } from "@/lib/api-client";
+
+export async function create{{pascalCase name}}(data: Record<string, any>) {
+  try {
+    const response = await client.post("/{{kebabCase name}}", { body: data });
+    return response;
+  } catch (error) {
+    console.error("Error in create{{pascalCase name}}:", error);
+    throw error;
+  }
+}
+
+export async function update{{pascalCase name}}(id: string, data: Record<string, any>) {
+  try {
+    const response = await client.patch(`/{{kebabCase name}}/${id}`, { body: data });
+    return response;
+  } catch (error) {
+    console.error(`Error in update{{pascalCase name}}(${id}):`, error);
+    throw error;
+  }
+}

@@ -1,0 +1,165 @@
+import { desc, eq } from "drizzle-orm";
+import * as HttpStatusCodes from "@/http/status-codes";
+import * as HttpStatusPhrases from "@/http/status-phrases";
+
+import type { AppRouteHandler } from "@/types";
+
+import { db } from "@deeliciousbakes/db";
+import { {{camelCase name}} } from "@deeliciousbakes/db/schema/{{kebabCase name}}";
+import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/constants";
+
+import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from "./{{kebabCase name}}.routes";
+import { recordAudit } from "@deeliciousbakes/db/helpers/record-audit";
+
+const AUDIT_TABLE_NAME = "{{snakeCase name}}";
+
+export const list: AppRouteHandler<ListRoute> = async (c) => {
+    const list = await db.query.{{camelCase name}}.findMany();
+    return c.json(list, HttpStatusCodes.OK);
+};
+
+export const create: AppRouteHandler<CreateRoute> = async (c) => {
+    const data = c.req.valid("json");
+    const user = c.get("user")!;
+
+    const [inserted] = await db
+        .insert({{camelCase name}})
+        .values({
+            ...data,
+            createdBy: user.id,
+            updatedBy: user.id,
+        })
+        .returning();
+
+    if (!inserted) {
+        return c.json(
+            { message: HttpStatusPhrases.INTERNAL_SERVER_ERROR },
+            HttpStatusCodes.INTERNAL_SERVER_ERROR,
+        );
+    }
+
+    await recordAudit(db, {
+        tableName: AUDIT_TABLE_NAME,
+        recordId: inserted.id,
+        action: "create",
+        userId: user.id,
+        before: null,
+        after: inserted as Record<string, unknown>,
+    });
+
+    return c.json(inserted, HttpStatusCodes.OK);
+};
+
+export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
+    const { id } = c.req.valid("param");
+    const item = await db.query.{{camelCase name}}.findFirst({
+        where(fields, operators) {
+            return operators.eq(fields.id, id);
+        },
+    });
+
+    if (!item) {
+        return c.json(
+            { message: HttpStatusPhrases.NOT_FOUND },
+            HttpStatusCodes.NOT_FOUND,
+        );
+    }
+
+    return c.json(item, HttpStatusCodes.OK);
+};
+
+export const patch: AppRouteHandler<PatchRoute> = async (c) => {
+    const { id } = c.req.valid("param");
+    const updates = c.req.valid("json");
+    const user = c.get("user")!;
+
+    if (Object.keys(updates).length === 0) {
+        return c.json(
+            {
+                success: false,
+                error: {
+                    issues: [
+                        {
+                            code: ZOD_ERROR_CODES.INVALID_UPDATES,
+                            path: [],
+                            message: ZOD_ERROR_MESSAGES.NO_UPDATES,
+                        },
+                    ],
+                    name: "ZodError",
+                },
+            },
+            HttpStatusCodes.UNPROCESSABLE_ENTITY,
+        );
+    }
+
+    const before = await db.query.{{camelCase name}}.findFirst({
+        where(fields, operators) {
+            return operators.eq(fields.id, id);
+        },
+    });
+
+    if (!before) {
+        return c.json(
+            { message: HttpStatusPhrases.NOT_FOUND },
+            HttpStatusCodes.NOT_FOUND,
+        );
+    }
+
+    const [updated] = await db
+        .update({{camelCase name}})
+        .set({
+            ...updates,
+            updatedBy: user.id,
+        })
+        .where(eq({{camelCase name}}.id, id))
+        .returning();
+
+    if (!updated) {
+        return c.json(
+            { message: HttpStatusPhrases.INTERNAL_SERVER_ERROR },
+            HttpStatusCodes.INTERNAL_SERVER_ERROR,
+        );
+    }
+
+    await recordAudit(db, {
+        tableName: AUDIT_TABLE_NAME,
+        recordId: updated.id,
+        action: "update",
+        userId: user.id,
+        before: before as Record<string, unknown>,
+        after: updated as Record<string, unknown>,
+    });
+
+    return c.json(updated, HttpStatusCodes.OK);
+};
+
+export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
+    const { id } = c.req.valid("param");
+    const user = c.get("user")!;
+
+    const before = await db.query.{{camelCase name}}.findFirst({
+        where(fields, operators) {
+            return operators.eq(fields.id, id);
+        },
+    });
+
+    if (!before) {
+        return c.json(
+            { message: HttpStatusPhrases.NOT_FOUND },
+            HttpStatusCodes.NOT_FOUND,
+        );
+    }
+
+    await db.delete({{camelCase name}}).where(eq({{camelCase name}}.id, id));
+
+    await recordAudit(db, {
+        tableName: AUDIT_TABLE_NAME,
+        recordId: id,
+        action: "delete",
+        userId: user.id,
+        before: before as Record<string, unknown>,
+        after: null,
+    });
+
+    return c.body(null, HttpStatusCodes.NO_CONTENT);
+};

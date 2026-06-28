@@ -1,0 +1,21 @@
+import { client } from "@/lib/api-client";
+
+export async function get{{pascalCase name}}List() {
+  try {
+    const response = await client.get("/{{kebabCase name}}");
+    return response;
+  } catch (error) {
+    console.error("Error in get{{pascalCase name}}List:", error);
+    throw error;
+  }
+}
+
+export async function get{{pascalCase name}}(id: string) {
+  try {
+    const response = await client.get(`/{{kebabCase name}}/${id}`);
+    return response;
+  } catch (error) {
+    console.error(`Error in get{{pascalCase name}}(${id}):`, error);
+    throw error;
+  }
+}
