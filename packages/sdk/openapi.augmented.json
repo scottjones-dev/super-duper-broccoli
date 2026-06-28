@@ -1,0 +1,2759 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Deelicious API",
+    "version": "0.0.0",
+    "description": "REST API for Deelicious. Provides ingredients, inventory, and baking operations.",
+    "contact": {
+      "name": "Alice Systems",
+      "email": "scottjones@alicesystems.co.uk",
+      "url": "https://alicesystems.co.uk"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://alicesystems.co.uk/license"
+    },
+    "termsOfService": "https://alicesystems.co.uk/terms-of-service",
+    "x-scalar-sdk-installation": [
+      {
+        "lang": "TypeScript",
+        "description": "```sh\nnpm install @scott-w-jones-hotmail-com-team/deelicious-api\n```"
+      }
+    ]
+  },
+  "externalDocs": {
+    "description": "Full API Documentation",
+    "url": "https://alicesystems.co.uk/docs/deelicious-api"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9000",
+      "description": "Local Development API"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Home",
+      "description": "Health check endpoints"
+    },
+    {
+      "name": "Ingredients",
+      "description": "Operations related to ingredients"
+    }
+  ],
+  "components": {
+    "schemas": {},
+    "parameters": {}
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Home"
+        ],
+        "operationId": "getHome",
+        "responses": {
+          "200": {
+            "description": "The root endpoint of the API, providing a welcome message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Deelicious Bakes API"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst list = await client.home.list();\nconsole.log(list);"
+          }
+        ]
+      }
+    },
+    "/audit-logs": {
+      "get": {
+        "operationId": "listAuditLogs",
+        "tags": [
+          "Audit Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of audit logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "tableName": {
+                        "type": "string"
+                      },
+                      "recordId": {
+                        "type": "string"
+                      },
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "create",
+                          "update",
+                          "delete"
+                        ]
+                      },
+                      "userId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "before": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "nullable": true
+                          },
+                          {
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "nullable": true
+                            }
+                          }
+                        ]
+                      },
+                      "after": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "nullable": true
+                          },
+                          {
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "nullable": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "tableName",
+                      "recordId",
+                      "action",
+                      "userId",
+                      "before",
+                      "after"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst list = await client.auditLogs.list();\nconsole.log(list);"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createAuditLog",
+        "tags": [
+          "Audit Logs"
+        ],
+        "requestBody": {
+          "description": "The audit log to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tableName": {
+                    "type": "string"
+                  },
+                  "recordId": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "create",
+                      "update",
+                      "delete"
+                    ]
+                  },
+                  "userId": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "before": {
+                    "type": "object",
+                    "nullable": true,
+                    "additionalProperties": false
+                  },
+                  "after": {
+                    "type": "object",
+                    "nullable": true,
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "tableName",
+                  "recordId",
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created audit log",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tableName": {
+                      "type": "string"
+                    },
+                    "recordId": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "enum": [
+                        "create",
+                        "update",
+                        "delete"
+                      ]
+                    },
+                    "userId": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "before": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "nullable": true
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "nullable": true
+                          }
+                        }
+                      ]
+                    },
+                    "after": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "nullable": true
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "nullable": true
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "tableName",
+                    "recordId",
+                    "action",
+                    "userId",
+                    "before",
+                    "after"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The validation error(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                }
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "path"
+                            ]
+                          }
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "issues",
+                        "name"
+                      ],
+                      "example": {
+                        "name": "ZodError",
+                        "issues": [
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "tableName"
+                            ],
+                            "message": "Invalid input: expected string, received undefined"
+                          },
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "recordId"
+                            ],
+                            "message": "Invalid input: expected string, received undefined"
+                          },
+                          {
+                            "code": "invalid_value",
+                            "path": [
+                              "action"
+                            ],
+                            "message": "Invalid option: expected one of \"create\"|\"update\"|\"delete\""
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst create = await client.auditLogs.create({\n  tableName: \"\",\n  recordId: \"\",\n  action: \"create\",\n});\nconsole.log(create);"
+          }
+        ]
+      }
+    },
+    "/audit-logs/{id}": {
+      "get": {
+        "operationId": "getAuditLog",
+        "tags": [
+          "Audit Logs"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "required": [
+                "id"
+              ],
+              "example": 42
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested audit log",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tableName": {
+                      "type": "string"
+                    },
+                    "recordId": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "enum": [
+                        "create",
+                        "update",
+                        "delete"
+                      ]
+                    },
+                    "userId": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "before": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "nullable": true
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "nullable": true
+                          }
+                        }
+                      ]
+                    },
+                    "after": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "nullable": true
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "nullable": true
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "tableName",
+                    "recordId",
+                    "action",
+                    "userId",
+                    "before",
+                    "after"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Audit log not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid id error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                }
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "path"
+                            ]
+                          }
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "issues",
+                        "name"
+                      ],
+                      "example": {
+                        "name": "ZodError",
+                        "issues": [
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "id"
+                            ],
+                            "message": "Invalid input: expected string, received undefined"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst retrieve = await client.auditLogs.retrieve(\"id\");\nconsole.log(retrieve);"
+          }
+        ]
+      }
+    },
+    "/settings": {
+      "get": {
+        "operationId": "listSettings",
+        "tags": [
+          "Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "companyName": {
+                        "type": "string"
+                      },
+                      "emailFrom": {
+                        "type": "string"
+                      },
+                      "createdBy": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "updatedBy": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "updatedAt",
+                      "companyName",
+                      "emailFrom",
+                      "createdBy",
+                      "updatedBy"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst list = await client.settings.list();\nconsole.log(list);"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createSetting",
+        "tags": [
+          "Settings"
+        ],
+        "requestBody": {
+          "description": "The setting to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "companyName": {
+                    "type": "string"
+                  },
+                  "emailFrom": {
+                    "type": "string"
+                  },
+                  "createdBy": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "updatedBy": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "emailFrom"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created setting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "companyName": {
+                      "type": "string"
+                    },
+                    "emailFrom": {
+                      "type": "string"
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "updatedBy": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "companyName",
+                    "emailFrom",
+                    "createdBy",
+                    "updatedBy"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The validation error(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                }
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "path"
+                            ]
+                          }
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "issues",
+                        "name"
+                      ],
+                      "example": {
+                        "name": "ZodError",
+                        "issues": [
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "emailFrom"
+                            ],
+                            "message": "Invalid input: expected string, received undefined"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst create = await client.settings.create({\n  emailFrom: \"\",\n});\nconsole.log(create);"
+          }
+        ]
+      }
+    },
+    "/settings/{id}": {
+      "get": {
+        "operationId": "getSetting",
+        "tags": [
+          "Settings"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "required": [
+                "id"
+              ],
+              "example": 42
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested setting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "companyName": {
+                      "type": "string"
+                    },
+                    "emailFrom": {
+                      "type": "string"
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "updatedBy": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "companyName",
+                    "emailFrom",
+                    "createdBy",
+                    "updatedBy"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Setting not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid id error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                }
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "path"
+                            ]
+                          }
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "issues",
+                        "name"
+                      ],
+                      "example": {
+                        "name": "ZodError",
+                        "issues": [
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "id"
+                            ],
+                            "message": "Invalid input: expected string, received undefined"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst retrieve = await client.settings.retrieve(\"id\");\nconsole.log(retrieve);"
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "patchSetting",
+        "tags": [
+          "Settings"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "required": [
+                "id"
+              ],
+              "example": 42
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "description": "The setting updates",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "companyName": {
+                    "type": "string"
+                  },
+                  "emailFrom": {
+                    "type": "string"
+                  },
+                  "createdBy": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "updatedBy": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated setting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "companyName": {
+                      "type": "string"
+                    },
+                    "emailFrom": {
+                      "type": "string"
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "updatedBy": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "companyName",
+                    "emailFrom",
+                    "createdBy",
+                    "updatedBy"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Setting not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The validation error(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "error": {
+                          "type": "object",
+                          "properties": {
+                            "issues": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string"
+                                  },
+                                  "path": {
+                                    "type": "array",
+                                    "items": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "number"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "code",
+                                  "path"
+                                ]
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "issues",
+                            "name"
+                          ],
+                          "example": {
+                            "name": "ZodError",
+                            "issues": [
+                              {
+                                "code": "invalid_type",
+                                "path": [
+                                  "fieldName"
+                                ],
+                                "message": "Expected string, received undefined"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "error"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "error": {
+                          "type": "object",
+                          "properties": {
+                            "issues": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string"
+                                  },
+                                  "path": {
+                                    "type": "array",
+                                    "items": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "number"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "code",
+                                  "path"
+                                ]
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "issues",
+                            "name"
+                          ],
+                          "example": {
+                            "name": "ZodError",
+                            "issues": [
+                              {
+                                "code": "invalid_type",
+                                "path": [
+                                  "id"
+                                ],
+                                "message": "Invalid input: expected string, received undefined"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "error"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst patch = await client.settings.patch(\"id\", {});\nconsole.log(patch);"
+          }
+        ]
+      }
+    },
+    "/ingredients": {
+      "get": {
+        "operationId": "listIngredients",
+        "tags": [
+          "Ingredients"
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of ingredients",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "createdBy": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "updatedBy": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "buyFrom": {
+                        "type": "string",
+                        "enum": [
+                          "sainsburys",
+                          "tesco",
+                          "bookers",
+                          "costco",
+                          "amazon",
+                          "other"
+                        ]
+                      },
+                      "buyQuantity": {
+                        "type": "number",
+                        "minimum": -8388608,
+                        "maximum": 8388607
+                      },
+                      "buyQuantityType": {
+                        "type": "string",
+                        "enum": [
+                          "count",
+                          "g",
+                          "kg",
+                          "ml",
+                          "l"
+                        ]
+                      },
+                      "buyPriceTotal": {
+                        "type": "integer",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                      },
+                      "isGluten": {
+                        "type": "boolean"
+                      },
+                      "isDairy": {
+                        "type": "boolean"
+                      },
+                      "isEggs": {
+                        "type": "boolean"
+                      },
+                      "isNuts": {
+                        "type": "boolean"
+                      },
+                      "isPeanuts": {
+                        "type": "boolean"
+                      },
+                      "isSoya": {
+                        "type": "boolean"
+                      },
+                      "isSesame": {
+                        "type": "boolean"
+                      },
+                      "isSulphites": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "updatedAt",
+                      "createdBy",
+                      "updatedBy",
+                      "name",
+                      "buyFrom",
+                      "buyQuantity",
+                      "buyQuantityType",
+                      "buyPriceTotal",
+                      "isGluten",
+                      "isDairy",
+                      "isEggs",
+                      "isNuts",
+                      "isPeanuts",
+                      "isSoya",
+                      "isSesame",
+                      "isSulphites"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst list = await client.ingredients.list();\nconsole.log(list);"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createIngredient",
+        "tags": [
+          "Ingredients"
+        ],
+        "requestBody": {
+          "description": "The ingredient to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "buyFrom": {
+                    "type": "string",
+                    "enum": [
+                      "sainsburys",
+                      "tesco",
+                      "bookers",
+                      "costco",
+                      "amazon",
+                      "other"
+                    ]
+                  },
+                  "buyQuantity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 8388607,
+                    "exclusiveMinimum": 0
+                  },
+                  "buyQuantityType": {
+                    "type": "string",
+                    "enum": [
+                      "count",
+                      "g",
+                      "kg",
+                      "ml",
+                      "l"
+                    ]
+                  },
+                  "buyPriceTotal": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483647,
+                    "exclusiveMinimum": 0
+                  },
+                  "isGluten": {
+                    "type": "boolean"
+                  },
+                  "isDairy": {
+                    "type": "boolean"
+                  },
+                  "isEggs": {
+                    "type": "boolean"
+                  },
+                  "isNuts": {
+                    "type": "boolean"
+                  },
+                  "isPeanuts": {
+                    "type": "boolean"
+                  },
+                  "isSoya": {
+                    "type": "boolean"
+                  },
+                  "isSesame": {
+                    "type": "boolean"
+                  },
+                  "isSulphites": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "buyFrom",
+                  "buyQuantity",
+                  "buyQuantityType",
+                  "buyPriceTotal"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created ingredient",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "updatedBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "buyFrom": {
+                      "type": "string",
+                      "enum": [
+                        "sainsburys",
+                        "tesco",
+                        "bookers",
+                        "costco",
+                        "amazon",
+                        "other"
+                      ]
+                    },
+                    "buyQuantity": {
+                      "type": "number",
+                      "minimum": -8388608,
+                      "maximum": 8388607
+                    },
+                    "buyQuantityType": {
+                      "type": "string",
+                      "enum": [
+                        "count",
+                        "g",
+                        "kg",
+                        "ml",
+                        "l"
+                      ]
+                    },
+                    "buyPriceTotal": {
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
+                    },
+                    "isGluten": {
+                      "type": "boolean"
+                    },
+                    "isDairy": {
+                      "type": "boolean"
+                    },
+                    "isEggs": {
+                      "type": "boolean"
+                    },
+                    "isNuts": {
+                      "type": "boolean"
+                    },
+                    "isPeanuts": {
+                      "type": "boolean"
+                    },
+                    "isSoya": {
+                      "type": "boolean"
+                    },
+                    "isSesame": {
+                      "type": "boolean"
+                    },
+                    "isSulphites": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "createdBy",
+                    "updatedBy",
+                    "name",
+                    "buyFrom",
+                    "buyQuantity",
+                    "buyQuantityType",
+                    "buyPriceTotal",
+                    "isGluten",
+                    "isDairy",
+                    "isEggs",
+                    "isNuts",
+                    "isPeanuts",
+                    "isSoya",
+                    "isSesame",
+                    "isSulphites"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The validation error(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                }
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "path"
+                            ]
+                          }
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "issues",
+                        "name"
+                      ],
+                      "example": {
+                        "name": "ZodError",
+                        "issues": [
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "name"
+                            ],
+                            "message": "Invalid input: expected string, received undefined"
+                          },
+                          {
+                            "code": "invalid_value",
+                            "path": [
+                              "buyFrom"
+                            ],
+                            "message": "Invalid option: expected one of \"sainsburys\"|\"tesco\"|\"bookers\"|\"costco\"|\"amazon\"|\"other\""
+                          },
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "buyQuantity"
+                            ],
+                            "message": "Invalid input: expected number, received undefined"
+                          },
+                          {
+                            "code": "invalid_value",
+                            "path": [
+                              "buyQuantityType"
+                            ],
+                            "message": "Invalid option: expected one of \"count\"|\"g\"|\"kg\"|\"ml\"|\"l\""
+                          },
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "buyPriceTotal"
+                            ],
+                            "message": "Invalid input: expected number, received undefined"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create ingredient",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Internal Server Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst create = await client.ingredients.create({\n  name: \"\",\n  buyFrom: \"sainsburys\",\n  buyQuantity: 0,\n  buyQuantityType: \"count\",\n  buyPriceTotal: 0,\n});\nconsole.log(create);"
+          }
+        ]
+      }
+    },
+    "/ingredients/{id}": {
+      "get": {
+        "operationId": "getIngredient",
+        "tags": [
+          "Ingredients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "required": [
+                "id"
+              ],
+              "example": 42
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested ingredient",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "updatedBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "buyFrom": {
+                      "type": "string",
+                      "enum": [
+                        "sainsburys",
+                        "tesco",
+                        "bookers",
+                        "costco",
+                        "amazon",
+                        "other"
+                      ]
+                    },
+                    "buyQuantity": {
+                      "type": "number",
+                      "minimum": -8388608,
+                      "maximum": 8388607
+                    },
+                    "buyQuantityType": {
+                      "type": "string",
+                      "enum": [
+                        "count",
+                        "g",
+                        "kg",
+                        "ml",
+                        "l"
+                      ]
+                    },
+                    "buyPriceTotal": {
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
+                    },
+                    "isGluten": {
+                      "type": "boolean"
+                    },
+                    "isDairy": {
+                      "type": "boolean"
+                    },
+                    "isEggs": {
+                      "type": "boolean"
+                    },
+                    "isNuts": {
+                      "type": "boolean"
+                    },
+                    "isPeanuts": {
+                      "type": "boolean"
+                    },
+                    "isSoya": {
+                      "type": "boolean"
+                    },
+                    "isSesame": {
+                      "type": "boolean"
+                    },
+                    "isSulphites": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "createdBy",
+                    "updatedBy",
+                    "name",
+                    "buyFrom",
+                    "buyQuantity",
+                    "buyQuantityType",
+                    "buyPriceTotal",
+                    "isGluten",
+                    "isDairy",
+                    "isEggs",
+                    "isNuts",
+                    "isPeanuts",
+                    "isSoya",
+                    "isSesame",
+                    "isSulphites"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ingredient not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid id error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                }
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "path"
+                            ]
+                          }
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "issues",
+                        "name"
+                      ],
+                      "example": {
+                        "name": "ZodError",
+                        "issues": [
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "id"
+                            ],
+                            "message": "Invalid input: expected string, received undefined"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst retrieve = await client.ingredients.retrieve(\"id\");\nconsole.log(retrieve);"
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "patchIngredient",
+        "tags": [
+          "Ingredients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "required": [
+                "id"
+              ],
+              "example": 42
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "description": "The ingredient updates",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "buyFrom": {
+                    "type": "string",
+                    "enum": [
+                      "sainsburys",
+                      "tesco",
+                      "bookers",
+                      "costco",
+                      "amazon",
+                      "other"
+                    ]
+                  },
+                  "buyQuantity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 8388607,
+                    "exclusiveMinimum": 0
+                  },
+                  "buyQuantityType": {
+                    "type": "string",
+                    "enum": [
+                      "count",
+                      "g",
+                      "kg",
+                      "ml",
+                      "l"
+                    ]
+                  },
+                  "buyPriceTotal": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483647,
+                    "exclusiveMinimum": 0
+                  },
+                  "isGluten": {
+                    "type": "boolean"
+                  },
+                  "isDairy": {
+                    "type": "boolean"
+                  },
+                  "isEggs": {
+                    "type": "boolean"
+                  },
+                  "isNuts": {
+                    "type": "boolean"
+                  },
+                  "isPeanuts": {
+                    "type": "boolean"
+                  },
+                  "isSoya": {
+                    "type": "boolean"
+                  },
+                  "isSesame": {
+                    "type": "boolean"
+                  },
+                  "isSulphites": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated ingredient",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "updatedBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "buyFrom": {
+                      "type": "string",
+                      "enum": [
+                        "sainsburys",
+                        "tesco",
+                        "bookers",
+                        "costco",
+                        "amazon",
+                        "other"
+                      ]
+                    },
+                    "buyQuantity": {
+                      "type": "number",
+                      "minimum": -8388608,
+                      "maximum": 8388607
+                    },
+                    "buyQuantityType": {
+                      "type": "string",
+                      "enum": [
+                        "count",
+                        "g",
+                        "kg",
+                        "ml",
+                        "l"
+                      ]
+                    },
+                    "buyPriceTotal": {
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
+                    },
+                    "isGluten": {
+                      "type": "boolean"
+                    },
+                    "isDairy": {
+                      "type": "boolean"
+                    },
+                    "isEggs": {
+                      "type": "boolean"
+                    },
+                    "isNuts": {
+                      "type": "boolean"
+                    },
+                    "isPeanuts": {
+                      "type": "boolean"
+                    },
+                    "isSoya": {
+                      "type": "boolean"
+                    },
+                    "isSesame": {
+                      "type": "boolean"
+                    },
+                    "isSulphites": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "createdBy",
+                    "updatedBy",
+                    "name",
+                    "buyFrom",
+                    "buyQuantity",
+                    "buyQuantityType",
+                    "buyPriceTotal",
+                    "isGluten",
+                    "isDairy",
+                    "isEggs",
+                    "isNuts",
+                    "isPeanuts",
+                    "isSoya",
+                    "isSesame",
+                    "isSulphites"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ingredient not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The validation error(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "error": {
+                          "type": "object",
+                          "properties": {
+                            "issues": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string"
+                                  },
+                                  "path": {
+                                    "type": "array",
+                                    "items": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "number"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "code",
+                                  "path"
+                                ]
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "issues",
+                            "name"
+                          ],
+                          "example": {
+                            "name": "ZodError",
+                            "issues": [
+                              {
+                                "code": "invalid_type",
+                                "path": [
+                                  "fieldName"
+                                ],
+                                "message": "Expected string, received undefined"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "error"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "error": {
+                          "type": "object",
+                          "properties": {
+                            "issues": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string"
+                                  },
+                                  "path": {
+                                    "type": "array",
+                                    "items": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "number"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "code",
+                                  "path"
+                                ]
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "issues",
+                            "name"
+                          ],
+                          "example": {
+                            "name": "ZodError",
+                            "issues": [
+                              {
+                                "code": "invalid_type",
+                                "path": [
+                                  "id"
+                                ],
+                                "message": "Invalid input: expected string, received undefined"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "error"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to update ingredient",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Internal Server Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst patch = await client.ingredients.patch(\"id\", {});\nconsole.log(patch);"
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "deleteIngredient",
+        "tags": [
+          "Ingredients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "required": [
+                "id"
+              ],
+              "example": 42
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Ingredient deleted"
+          },
+          "404": {
+            "description": "Ingredient not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid id error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                }
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "path"
+                            ]
+                          }
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "issues",
+                        "name"
+                      ],
+                      "example": {
+                        "name": "ZodError",
+                        "issues": [
+                          {
+                            "code": "invalid_type",
+                            "path": [
+                              "id"
+                            ],
+                            "message": "Invalid input: expected string, received undefined"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nawait client.ingredients.delete(\"id\");"
+          }
+        ]
+      }
+    },
+    "/ingredients/{id}/audit-log": {
+      "get": {
+        "operationId": "getIngredientAuditLog",
+        "description": "Get the audit log history for a single ingredient",
+        "tags": [
+          "Ingredients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "required": [
+                "id"
+              ],
+              "example": 42
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Audit log entries for this ingredient",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "tableName": {
+                        "type": "string"
+                      },
+                      "recordId": {
+                        "type": "string"
+                      },
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "create",
+                          "update",
+                          "delete"
+                        ]
+                      },
+                      "userId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "before": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "nullable": true
+                          },
+                          {
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "nullable": true
+                            }
+                          }
+                        ]
+                      },
+                      "after": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "nullable": true
+                          },
+                          {
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "nullable": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "tableName",
+                      "recordId",
+                      "action",
+                      "userId",
+                      "before",
+                      "after"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ingredient not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "example": {
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-scalar-examples": [
+          {
+            "lang": "TypeScript",
+            "label": "TypeScript",
+            "source": "import DeeliciousAPI from \"@scott-w-jones-hotmail-com-team/deelicious-api\";\n\nconst client = new DeeliciousAPI();\n\nconst listAuditLog = await client.ingredients.listAuditLog(\"id\");\nconsole.log(listAuditLog);"
+          }
+        ]
+      }
+    }
+  }
+}
