@@ -1,15 +1,16 @@
 {
-  "name": "web",
+  "name": "@deeliciousbakes/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3001",
+    "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
     "@deeliciousbakes/env": "workspace:*",
     "@deeliciousbakes/ui": "workspace:*",
+    "@deeliciousbakes/sdk": "workspace:*",
     "@tanstack/react-form": "^1.28.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "better-auth": "catalog:",
@@ -19,6 +20,7 @@
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "recharts": "3.8.0",
     "sonner": "catalog:",
     "zod": "catalog:"
   },
