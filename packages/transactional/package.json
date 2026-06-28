@@ -1,0 +1,35 @@
+{
+  "name": "@deeliciousbakes/transactional",
+  "version": "1.0.0",
+  "description": "Transactional email system using React Email + Resend",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./theme": "./src/theme.ts"
+  },
+  "scripts": {
+    "dev": "email dev --dir ./src/templates --port 4000",
+    "export": "email export"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@deeliciousbakes/db": "workspace:*",
+    "@deeliciousbakes/env": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-email": "6.6.5",
+    "resend": "^6.16.0"
+  },
+  "devDependencies": {
+    "@react-email/ui": "6.6.5",
+    "@types/node": "^26.0.1",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:"
+  }
+}
